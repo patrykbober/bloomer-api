@@ -1,1 +1,13 @@
+server:
+  port: 8090
 
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+#    org.springframework.boot.autoconfigure: DEBUG
+
+jwt:
+  private.key: classpath:key/bloomer.key
+  public.key: classpath:key/bloomer.key.pub
