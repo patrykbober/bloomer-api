@@ -1,18 +1,19 @@
 package pl.patrykbober.bloomer;
 
 import org.springframework.core.log.LogMessage;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,23 +21,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final AntPathRequestMatcher DEFAULT_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/token", "POST");
-
-    private final JwtDecoder jwtDecoder;
+    private final AuthenticationManager authenticationManager;
+    private final RequestMatcher authenticationRequestMatcher = new AntPathRequestMatcher("/token", "POST");
+    private final AuthenticationEntryPoint authenticationEntryPoint = new BearerTokenAuthenticationEntryPoint();
+    private final AuthenticationFailureHandler authenticationFailureHandler = (request, response, exception) -> {
+        if (exception instanceof AuthenticationServiceException) {
+            throw exception;
+        } else {
+            this.authenticationEntryPoint.commence(request, response, exception);
+        }
+    };
     private final UserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtDecoder jwtDecoder, UserDetailsService userDetailsService) {
-        super(DEFAULT_ANT_PATH_REQUEST_MATCHER, authenticationManager);
-        this.jwtDecoder = jwtDecoder;
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+        this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        if (!request.getMethod().equals("POST")) {
-            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (!authenticationRequestMatcher.matches(request)) {
+            chain.doFilter(request, response);
+            return;
         }
 
         var grantType = obtainGrantType(request);
@@ -44,38 +52,44 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
             var username = obtainUsername(request);
             var password = obtainPassword(request);
             var authRequest = new UsernamePasswordAuthenticationToken(username, password);
-            return this.getAuthenticationManager().authenticate(authRequest);
+            try {
+                var authenticationResult = authenticationManager.authenticate(authRequest);
+                var context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authenticationResult);
+                SecurityContextHolder.setContext(context);
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authenticationResult));
+                }
+
+                chain.doFilter(request, response);
+            } catch (AuthenticationException e) {
+                SecurityContextHolder.clearContext();
+                this.logger.trace("Failed to process authentication request", e);
+                this.authenticationFailureHandler.onAuthenticationFailure(request, response, e);
+            }
         } else if ("refresh_token".equals(grantType)) {
             var refreshToken = obtainRefreshToken(request);
-            var token = jwtDecoder.decode(refreshToken);
-            var user = userDetailsService.loadUserByUsername(token.getSubject());
-            return new UsernamePasswordAuthenticationToken(token.getSubject(), null, user.getAuthorities());
+            var authRequest = new BearerTokenAuthenticationToken(refreshToken);
+            try {
+                var authenticationResult = authenticationManager.authenticate(authRequest);
+                var user = userDetailsService.loadUserByUsername(authenticationResult.getName());
+                authenticationResult = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+                var context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(authenticationResult);
+                SecurityContextHolder.setContext(context);
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authenticationResult));
+                }
+
+                chain.doFilter(request, response);
+            } catch (AuthenticationException e) {
+                SecurityContextHolder.clearContext();
+                this.logger.trace("Failed to process authentication request", e);
+                this.authenticationFailureHandler.onAuthenticationFailure(request, response, e);
+            }
         } else {
             throw new AuthenticationServiceException("Grant type not supported: " + grantType);
         }
-    }
-
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws ServletException, IOException {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authResult);
-        SecurityContextHolder.setContext(context);
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug(LogMessage.format("Set SecurityContextHolder to %s", authResult));
-        }
-
-        chain.doFilter(request, response);
-    }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        SecurityContextHolder.clearContext();
-        this.logger.trace("Failed to process authentication request", failed);
-        this.logger.trace("Cleared SecurityContextHolder");
-        this.logger.trace("Handling authentication failure");
-
-        this.logger.debug("Sending 401 Unauthorized error");
-        response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
     private String obtainGrantType(HttpServletRequest request) {
@@ -109,5 +123,4 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         refreshToken = refreshToken.trim();
         return refreshToken;
     }
-
 }

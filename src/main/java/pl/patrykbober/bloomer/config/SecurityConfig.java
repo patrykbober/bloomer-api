@@ -49,7 +49,7 @@ public class SecurityConfig {
                         authorize.anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .addFilterAt(new JwtAuthenticationFilter(authManager, jwtDecoder(), users()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new JwtAuthenticationFilter(authManager, users()), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
