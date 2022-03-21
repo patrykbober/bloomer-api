@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.server.resource.web.access.BearerToke
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.patrykbober.bloomer.JwtAuthenticationFilter;
+import pl.patrykbober.bloomer.auth.AuthenticationFilter;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -51,7 +51,7 @@ public class SecurityConfig {
                         authorize.anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .addFilterAt(new JwtAuthenticationFilter(authManager, users()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new AuthenticationFilter(authManager, users()), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())

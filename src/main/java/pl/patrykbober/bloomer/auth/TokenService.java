@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer;
+package pl.patrykbober.bloomer.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,11 +48,11 @@ public class TokenService {
                 .build();
         var refreshToken = this.encoder.encode(JwtEncoderParameters.from(refreshTokenClaims)).getTokenValue();
 
-        return AccessTokenResponse.builder()
-                .accessToken(accessToken)
-                .accessTokenExpiresAt(now.plusSeconds(accessTokenExpiry))
-                .refreshToken(refreshToken)
-                .refreshTokenExpiresAt(now.plusSeconds(refreshTokenExpiry))
-                .build();
+        return new AccessTokenResponse(
+                accessToken,
+                now.plusSeconds(accessTokenExpiry),
+                refreshToken,
+                now.plusSeconds(refreshTokenExpiry)
+        );
     }
 }
