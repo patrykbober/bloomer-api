@@ -23,6 +23,7 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final RequestMatcher authenticationRequestMatcher = new AntPathRequestMatcher("/token", "POST");
     private final AuthenticationEntryPoint authenticationEntryPoint = new BearerTokenAuthenticationEntryPoint();
@@ -33,7 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             this.authenticationEntryPoint.commence(request, response, exception);
         }
     };
-    private final UserDetailsService userDetailsService;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;

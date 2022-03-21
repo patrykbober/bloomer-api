@@ -1,6 +1,7 @@
 package pl.patrykbober.bloomer;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -15,8 +16,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final static long ACCESS_TOKEN_EXPIRY = 3600L;
-    private final static long REFRESH_TOKEN_EXPIRY = 30L;
+    @Value("${jwt.expiry.access_token}")
+    private long accessTokenExpiry;
+
+    @Value("${jwt.expiry.refresh_token}")
+    private long refreshTokenExpiry;
 
     private final JwtEncoder encoder;
 
@@ -30,7 +34,7 @@ public class TokenService {
         var accessTokenClaims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(ACCESS_TOKEN_EXPIRY))
+                .expiresAt(now.plusSeconds(accessTokenExpiry))
                 .subject(username)
                 .claim("scope", scope)
                 .build();
@@ -39,16 +43,16 @@ public class TokenService {
         var refreshTokenClaims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(REFRESH_TOKEN_EXPIRY))
+                .expiresAt(now.plusSeconds(refreshTokenExpiry))
                 .subject(username)
                 .build();
         var refreshToken = this.encoder.encode(JwtEncoderParameters.from(refreshTokenClaims)).getTokenValue();
 
         return AccessTokenResponse.builder()
                 .accessToken(accessToken)
-                .accessTokenExpiresAt(now.plusSeconds(ACCESS_TOKEN_EXPIRY))
+                .accessTokenExpiresAt(now.plusSeconds(accessTokenExpiry))
                 .refreshToken(refreshToken)
-                .refreshTokenExpiresAt(now.plusSeconds(REFRESH_TOKEN_EXPIRY))
+                .refreshTokenExpiresAt(now.plusSeconds(refreshTokenExpiry))
                 .build();
     }
 }
