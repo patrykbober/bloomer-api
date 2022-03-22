@@ -8,10 +8,11 @@ logging:
     org.springframework.security: DEBUG
 #    org.springframework.boot.autoconfigure: DEBUG
 
-jwt:
-  private.key: classpath:key/bloomer.key
-  public.key: classpath:key/bloomer.key.pub
+app:
+  jwt:
+    private.key: classpath:key/bloomer.key
+    public.key: classpath:key/bloomer.key.pub
 
-  expiry:
-    access_token: 3600 # 60 * 60
-    refresh_token: 1209600 # 60 * 60 * 24 * 14
+    expiry:
+      access_token: 3600 # 60 * 60
+      refresh_token: 1209600 # 60 * 60 * 24 * 14

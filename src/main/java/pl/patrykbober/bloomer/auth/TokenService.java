@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TokenService {
 
-    @Value("${jwt.expiry.access_token}")
+    @Value("${app.jwt.expiry.access_token}")
     private long accessTokenExpiry;
 
-    @Value("${jwt.expiry.refresh_token}")
+    @Value("${app.jwt.expiry.refresh_token}")
     private long refreshTokenExpiry;
 
     private final JwtEncoder encoder;

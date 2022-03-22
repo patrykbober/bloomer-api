@@ -34,10 +34,10 @@ import java.security.interfaces.RSAPublicKey;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Value("${jwt.public.key}")
+    @Value("${app.jwt.public.key}")
     private RSAPublicKey publicKey;
 
-    @Value("${jwt.private.key}")
+    @Value("${app.jwt.private.key}")
     private RSAPrivateKey privateKey;
 
     @Bean

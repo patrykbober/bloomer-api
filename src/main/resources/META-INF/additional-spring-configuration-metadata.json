@@ -1,23 +1,24 @@
 {
   "properties": [
     {
-      "name": "jwt.private.key",
+      "name": "app.jwt.private.key",
       "type": "java.lang.String",
       "description": "Private key location."
     },
     {
-      "name": "jwt.public.key",
+      "name": "app.jwt.public.key",
       "type": "java.lang.String",
       "description": "Public key location."
     },
     {
-      "name": "jwt.expiry.access_token",
+      "name": "app.jwt.expiry.access_token",
       "type": "java.lang.String",
       "description": "Expiration time of an access token in seconds."
     },
     {
-      "name": "jwt.expiry.refresh_token",
+      "name": "app.jwt.expiry.refresh_token",
       "type": "java.lang.String",
       "description": "Expiration time of a refresh token in seconds."
     }
-  ] }
+  ]
+}
