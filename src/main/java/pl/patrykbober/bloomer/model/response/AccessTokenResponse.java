@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.auth;
+package pl.patrykbober.bloomer.model.response;
 
 import java.time.Instant;
 
