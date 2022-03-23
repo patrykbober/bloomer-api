@@ -8,6 +8,18 @@ logging:
     org.springframework.security: DEBUG
 #    org.springframework.boot.autoconfigure: DEBUG
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bloomer
+    username: bloomer
+    password: bloomer
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    enabled: false
+
 app:
   jwt:
     private.key: classpath:key/bloomer.key
