@@ -33,10 +33,8 @@ public class BloomerUserDetailsService implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Set<Role> roles) {
-        var rolePrefix = "ROLE_";
         return roles.stream()
                 .map(Role::getName)
-                .map(roleName -> rolePrefix + roleName)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import pl.patrykbober.bloomer.model.response.AccessTokenResponse;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,17 +26,17 @@ public class TokenService {
 
     public AccessTokenResponse getAccessTokenResponse(Authentication authentication) {
         var username = authentication.getName();
-
         var now = Instant.now();
-        var scope = authentication.getAuthorities().stream()
+
+        var roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+                .toList();
         var accessTokenClaims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(accessTokenExpiry))
                 .subject(username)
-                .claim("scope", scope)
+                .claim("roles", roles)
                 .build();
         var accessToken = this.encoder.encode(JwtEncoderParameters.from(accessTokenClaims)).getTokenValue();
 

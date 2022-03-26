@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TestController {
 
-    @PreAuthorize("hasAuthority('SCOPE_admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public String hello(Authentication authentication) {
         return "Hello, " + authentication.getName() + "!";
     }
-
-
 
 }
