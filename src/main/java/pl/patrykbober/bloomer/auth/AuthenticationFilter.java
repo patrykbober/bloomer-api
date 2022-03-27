@@ -51,6 +51,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if ("password".equals(grantType)) {
             var username = obtainUsername(request);
             var password = obtainPassword(request);
+            if (username.isEmpty() || password.isEmpty()) {
+                sendBadRequest(response, "Credentials cannot be empty");
+                return;
+            }
             var authRequest = new UsernamePasswordAuthenticationToken(username, password);
             try {
                 var authenticationResult = authenticationManager.authenticate(authRequest);
@@ -69,6 +73,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             }
         } else if ("refresh_token".equals(grantType)) {
             var refreshToken = obtainRefreshToken(request);
+            if (refreshToken.isEmpty()) {
+                sendBadRequest(response, "Refresh token cannot be empty");
+                return;
+            }
             var authRequest = new BearerTokenAuthenticationToken(refreshToken);
             try {
                 var authenticationResult = authenticationManager.authenticate(authRequest);
@@ -88,7 +96,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 this.authenticationFailureHandler.onAuthenticationFailure(request, response, e);
             }
         } else {
-            throw new AuthenticationServiceException("Grant type not supported: " + grantType);
+            sendBadRequest(response, "Grant type not supported: " + grantType);
         }
     }
 
@@ -122,5 +130,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         refreshToken = refreshToken != null ? refreshToken : "";
         refreshToken = refreshToken.trim();
         return refreshToken;
+    }
+
+    private void sendBadRequest(HttpServletResponse response, String msg) throws IOException {
+        this.logger.trace("Failed to process authentication request: " + msg);
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, msg);
     }
 }

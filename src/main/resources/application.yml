@@ -1,22 +1,4 @@
-server:
-  port: 8090
-
-logging:
-  level:
-    root: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-#    org.springframework.boot.autoconfigure: DEBUG
-
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bloomer
-    username: bloomer
-    password: bloomer
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
   liquibase:
     enabled: false
 
