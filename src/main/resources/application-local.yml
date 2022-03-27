@@ -10,7 +10,7 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bloomer
+    url: jdbc:postgresql://localhost:5433/bloomer
     username: bloomer
     password: bloomer
   jpa:
