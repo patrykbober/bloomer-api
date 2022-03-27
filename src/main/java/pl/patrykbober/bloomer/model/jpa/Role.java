@@ -18,7 +18,7 @@ public class Role extends AbstractBaseEntity {
     @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
 }

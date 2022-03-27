@@ -20,7 +20,7 @@ public class BloomerUser extends AbstractBaseEntity {
     private Long id;
 
     @NaturalId
-    @Column(name = "email", nullable = false, updatable = false)
+    @Column(name = "email", nullable = false, updatable = false, unique = true)
     private String email;
 
     @Column(name = "first_name")
@@ -29,10 +29,10 @@ public class BloomerUser extends AbstractBaseEntity {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "active")
+    @Column(name = "active", nullable = false)
     private boolean active;
 
     @ManyToMany
