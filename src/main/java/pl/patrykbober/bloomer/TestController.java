@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.controller;
+package pl.patrykbober.bloomer;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

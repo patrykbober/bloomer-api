@@ -1,8 +1,9 @@
-package pl.patrykbober.bloomer.model.jpa;
+package pl.patrykbober.bloomer.domain.user;
 
 import lombok.Getter;
 import org.hibernate.annotations.NaturalId;
-import pl.patrykbober.bloomer.commons.jpa.AbstractBaseEntity;
+import pl.patrykbober.bloomer.common.jpa.AbstractBaseEntity;
+import pl.patrykbober.bloomer.domain.role.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;

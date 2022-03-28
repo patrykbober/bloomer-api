@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.auth;
+package pl.patrykbober.bloomer.security;
 
 import org.springframework.core.log.LogMessage;
 import org.springframework.security.authentication.AuthenticationManager;

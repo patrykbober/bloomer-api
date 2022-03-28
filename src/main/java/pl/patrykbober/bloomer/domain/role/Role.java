@@ -1,8 +1,8 @@
-package pl.patrykbober.bloomer.model.jpa;
+package pl.patrykbober.bloomer.domain.role;
 
 import lombok.Getter;
 import lombok.Setter;
-import pl.patrykbober.bloomer.commons.jpa.AbstractBaseEntity;
+import pl.patrykbober.bloomer.common.jpa.AbstractBaseEntity;
 
 import javax.persistence.*;
 

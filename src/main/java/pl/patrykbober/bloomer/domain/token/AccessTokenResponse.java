@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.model.response;
+package pl.patrykbober.bloomer.domain.token;
 
 import java.time.Instant;
 

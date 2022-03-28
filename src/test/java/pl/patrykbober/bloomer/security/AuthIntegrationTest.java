@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.auth;
+package pl.patrykbober.bloomer.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.service;
+package pl.patrykbober.bloomer.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import pl.patrykbober.bloomer.model.jpa.Role;
-import pl.patrykbober.bloomer.repository.BloomerUserRepository;
+import pl.patrykbober.bloomer.domain.role.Role;
+import pl.patrykbober.bloomer.domain.user.UserRepository;
 
 import java.util.Collection;
 import java.util.Set;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BloomerUserDetailsService implements UserDetailsService {
 
-    private final BloomerUserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

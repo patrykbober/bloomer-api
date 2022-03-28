@@ -1,4 +1,4 @@
-package pl.patrykbober.bloomer.commons.jpa;
+package pl.patrykbober.bloomer.common.jpa;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
