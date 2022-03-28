@@ -10,7 +10,7 @@
     </parent>
     <groupId>pl.patrykbober</groupId>
     <artifactId>bloomer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>bloomer</name>
     <description>bloomer</description>
     <properties>
@@ -72,6 +72,7 @@
     </dependencies>
 
     <build>
+        <finalName>bloomer-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
