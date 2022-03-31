@@ -1,13 +1,14 @@
 package pl.patrykbober.bloomer.domain.role;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import pl.patrykbober.bloomer.common.jpa.AbstractBaseEntity;
 
 import javax.persistence.*;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "role")
 public class Role extends AbstractBaseEntity {
@@ -18,6 +19,7 @@ public class Role extends AbstractBaseEntity {
     @SequenceGenerator(name = "role_id_seq", sequenceName = "role_id_seq", allocationSize = 1)
     private Long id;
 
+    @Setter
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 

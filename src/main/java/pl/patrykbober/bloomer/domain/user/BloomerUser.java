@@ -1,6 +1,6 @@
 package pl.patrykbober.bloomer.domain.user;
 
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 import pl.patrykbober.bloomer.common.jpa.AbstractBaseEntity;
 import pl.patrykbober.bloomer.domain.role.Role;
@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "bloomer_user")
 public class BloomerUser extends AbstractBaseEntity {
@@ -24,15 +27,19 @@ public class BloomerUser extends AbstractBaseEntity {
     @Column(name = "email", nullable = false, updatable = false, unique = true)
     private String email;
 
+    @Setter
     @Column(name = "first_name")
     private String firstName;
 
+    @Setter
     @Column(name = "last_name")
     private String lastName;
 
+    @Setter
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Setter
     @Column(name = "active", nullable = false)
     private boolean active;
 
