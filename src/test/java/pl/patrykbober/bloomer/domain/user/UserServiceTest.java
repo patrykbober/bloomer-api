@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.patrykbober.bloomer.domain.role.Role;
 import pl.patrykbober.bloomer.domain.role.RoleRepository;
 import pl.patrykbober.bloomer.domain.user.request.CreateUserRequest;
+import pl.patrykbober.bloomer.domain.user.request.RegisterUserRequest;
 import pl.patrykbober.bloomer.domain.user.request.SelfUpdateUserRequest;
 import pl.patrykbober.bloomer.domain.user.request.UpdateUserRequest;
 import pl.patrykbober.bloomer.exception.BloomerException;
@@ -63,7 +64,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenEmailAlreadyExists() {
+    public void throwExceptionWhenCreateUserInvokedWithEmailAlreadyExists() {
         // given
         var request = new CreateUserRequest("user@bloomer.com", "fn", "ln", "passwd", true, List.of("USER"));
 
@@ -343,6 +344,35 @@ public class UserServiceTest {
         // then
         assertThat(thrown).isNotNull();
         assertThat(thrown.getErrorCode()).isEqualTo(ErrorCode.USER_NOT_FOUND);
+    }
+
+    @Test
+    public void successfullyRegisterUser() {
+        // given
+        var request = new RegisterUserRequest("user@bloomer.com", "fn", "ln", "passwd");
+
+        when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+
+        // when
+        userService.register(request);
+
+        // then
+        verify(userRepository).save(any(BloomerUser.class));
+    }
+
+    @Test
+    public void throwExceptionWhenRegisterUserInvokedWithEmailAlreadyExists() {
+        // given
+        var request = new RegisterUserRequest("user@bloomer.com", "fn", "ln", "passwd");
+
+        when(userRepository.existsByEmail(any())).thenReturn(true);
+
+        // when
+        var thrown = catchThrowableOfType(() -> userService.register(request), BloomerException.class);
+
+        // then
+        assertThat(thrown).isNotNull();
+        assertThat(thrown.getErrorCode()).isEqualTo(ErrorCode.EMAIL_ALREADY_EXISTS);
     }
 
     private Answer<UserDto> mapInputToDto() {

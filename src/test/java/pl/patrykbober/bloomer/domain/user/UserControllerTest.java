@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -21,8 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static pl.patrykbober.bloomer.util.BloomerTestUtils.asJsonString;
 
 @SpringBootTest
@@ -80,6 +80,7 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andDo(print());
     }
 
@@ -93,6 +94,7 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andDo(print());
     }
 

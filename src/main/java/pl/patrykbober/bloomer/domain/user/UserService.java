@@ -106,6 +106,20 @@ public class UserService {
     }
 
     public Long register(RegisterUserRequest request) {
-        return null;
+        if (userRepository.existsByEmail(request.email())) {
+            throw new BloomerException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
+        }
+
+        var user = BloomerUser.builder()
+                .email(request.email())
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .password(passwordEncoder.encode(request.password()))
+                .active(false)
+                .roles(Set.of())
+                .build();
+
+        userRepository.save(user);
+        return user.getId();
     }
 }
