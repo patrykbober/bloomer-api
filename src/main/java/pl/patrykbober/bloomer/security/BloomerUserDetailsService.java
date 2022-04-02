@@ -27,6 +27,10 @@ public class BloomerUserDetailsService implements UserDetailsService {
                 .map(user -> new User(
                         user.getEmail(),
                         user.getPassword(),
+                        user.isActive(),
+                        true,
+                        true,
+                        true,
                         getAuthorities(user.getRoles())
                 ))
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email %s has not been found", username)));
