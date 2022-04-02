@@ -11,6 +11,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.function.Consumer;
 
 @Getter
 @SuperBuilder
@@ -29,5 +30,11 @@ public abstract class AbstractBaseEntity implements Serializable {
     @Version
     @Column(name = "optlock_version")
     protected Long version;
+
+    public <T> void setIfNotNull(final Consumer<T> setter, final T value) {
+        if (value != null) {
+            setter.accept(value);
+        }
+    }
 
 }
