@@ -10,6 +10,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.patrykbober.bloomer.domain.role.Role;
+import pl.patrykbober.bloomer.domain.role.RoleRepository;
 import pl.patrykbober.bloomer.domain.user.request.CreateUserRequest;
 import pl.patrykbober.bloomer.domain.user.request.SelfUpdateUserRequest;
 import pl.patrykbober.bloomer.domain.user.request.UpdateUserRequest;
@@ -37,6 +38,9 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private RoleRepository roleRepository;
+
     @InjectMocks
     private UserService userService;
 
@@ -45,9 +49,11 @@ public class UserServiceTest {
     @Test
     public void successfullyCreateUser() {
         // given
-        when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+        var request = new CreateUserRequest("user@bloomer.com", "fn", "ln", "passwd", true, List.of("USER", "INVALID"));
 
-        var request = new CreateUserRequest("user@bloomer.com", "fn", "ln", "passwd", true, List.of("USER"));
+        when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+        when(roleRepository.findByName(eq("USER"))).thenReturn(Optional.of(new Role(1L, "USER")));
+        when(roleRepository.findByName(eq("INVALID"))).thenReturn(Optional.empty());
 
         // when
         userService.create(request);

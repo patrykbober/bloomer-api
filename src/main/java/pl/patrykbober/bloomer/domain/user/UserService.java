@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.patrykbober.bloomer.domain.role.RoleRepository;
 import pl.patrykbober.bloomer.domain.user.request.CreateUserRequest;
 import pl.patrykbober.bloomer.domain.user.request.RegisterUserRequest;
 import pl.patrykbober.bloomer.domain.user.request.SelfUpdateUserRequest;
@@ -13,6 +14,7 @@ import pl.patrykbober.bloomer.exception.BloomerException;
 import pl.patrykbober.bloomer.exception.ErrorCode;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,14 +32,18 @@ public class UserService {
             throw new BloomerException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
         }
 
+        var roles = request.roles().stream()
+                .map(roleRepository::findByName)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toSet());
         var user = BloomerUser.builder()
                 .email(request.email())
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .password(passwordEncoder.encode(request.password()))
                 .active(request.active())
+                .roles(roles)
                 .build();
-        // TODO implement roles mapping
 
         userRepository.save(user);
         return user.getId();
