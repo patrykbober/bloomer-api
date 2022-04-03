@@ -81,4 +81,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: target/bloomer.jar
+          path: target/bloomer-api.jar
