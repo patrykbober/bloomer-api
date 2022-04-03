@@ -52,7 +52,7 @@ public class UserService {
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
                 .map(userMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public UserDto findById(Long id) {

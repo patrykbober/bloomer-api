@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserMapper userMapper;
@@ -47,13 +47,13 @@ public class UserServiceTest {
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
     @Test
-    public void successfullyCreateUser() {
+    void successfullyCreateUser() {
         // given
         var request = new CreateUserRequest("user@bloomer.com", "fn", "ln", "passwd", true, List.of("USER", "INVALID"));
 
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        when(roleRepository.findByName(eq("USER"))).thenReturn(Optional.of(new Role(1L, "USER")));
-        when(roleRepository.findByName(eq("INVALID"))).thenReturn(Optional.empty());
+        when(roleRepository.findByName("USER")).thenReturn(Optional.of(new Role(1L, "USER")));
+        when(roleRepository.findByName("INVALID")).thenReturn(Optional.empty());
 
         // when
         userService.create(request);
@@ -63,7 +63,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenCreateUserInvokedWithEmailAlreadyExists() {
+    void throwExceptionWhenCreateUserInvokedWithEmailAlreadyExists() {
         // given
         var request = new CreateUserRequest("user@bloomer.com", "fn", "ln", "passwd", true, List.of("USER"));
 
@@ -78,7 +78,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getAllUsersFromDatabase() {
+    void getAllUsersFromDatabase() {
         // given
         var user = BloomerUser.builder()
                 .id(1L)
@@ -109,7 +109,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void returnUserWithGivenIdIfFoundInDatabase() {
+    void returnUserWithGivenIdIfFoundInDatabase() {
         // given
         var id = 1L;
         var user = BloomerUser.builder()
@@ -139,7 +139,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenUserWithGivenIdNotFoundInDatabase() {
+    void throwExceptionWhenUserWithGivenIdNotFoundInDatabase() {
         // given
         var id = 1L;
 
@@ -154,7 +154,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void returnUserWithGivenEmailIfFoundInDatabase() {
+    void returnUserWithGivenEmailIfFoundInDatabase() {
         // given
         var email = "user@bloomer.com";
         var user = BloomerUser.builder()
@@ -184,7 +184,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenUserWithGivenEmailNotFoundInDatabase() {
+    void throwExceptionWhenUserWithGivenEmailNotFoundInDatabase() {
         // given
         var email = "user@bloomer.com";
 
@@ -199,7 +199,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void successfullyUpdateUserByIdIfFoundInDatabase() {
+    void successfullyUpdateUserByIdIfFoundInDatabase() {
         // given
         var id = 1L;
         var request = new UpdateUserRequest("newFn", "newLn", "newPassword", null, null);
@@ -230,7 +230,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenUpdateInvokedForUserWithIdNotFoundInDatabase() {
+    void throwExceptionWhenUpdateInvokedForUserWithIdNotFoundInDatabase() {
         // given
         var id = 1L;
         var request = new UpdateUserRequest("newFn", "newLn", "newPassword", null, null);
@@ -246,7 +246,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void successfullyUpdateUserByEmailIfFoundInDatabase() {
+    void successfullyUpdateUserByEmailIfFoundInDatabase() {
         // given
         var email = "user@bloomer.com";
         var request = new SelfUpdateUserRequest("newFn", "newLn");
@@ -276,7 +276,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenUpdateInvokedForUserWithEmailNotFoundInDatabase() {
+    void throwExceptionWhenUpdateInvokedForUserWithEmailNotFoundInDatabase() {
         // given
         var email = "user@bloomer.com";
         var request = new SelfUpdateUserRequest("newFn", "newLn");
@@ -292,7 +292,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void successfullyDeleteUserByIdIfFoundInDatabase() {
+    void successfullyDeleteUserByIdIfFoundInDatabase() {
         // given
         var id = 1L;
 
@@ -300,11 +300,11 @@ public class UserServiceTest {
         userService.deleteById(id);
 
         // then
-        verify(userRepository).deleteById(eq(id));
+        verify(userRepository).deleteById(id);
     }
 
     @Test
-    public void throwExceptionWhenDeleteInvokedForUserWithIdNotFoundInDatabase() {
+    void throwExceptionWhenDeleteInvokedForUserWithIdNotFoundInDatabase() {
         // given
         var id = 1L;
 
@@ -319,7 +319,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void successfullyDeleteUserByEmailIfFoundInDatabase() {
+    void successfullyDeleteUserByEmailIfFoundInDatabase() {
         // given
         var email = "user@bloomer.com";
 
@@ -327,11 +327,11 @@ public class UserServiceTest {
         userService.deleteByEmail(email);
 
         // then
-        verify(userRepository).deleteByEmail(eq(email));
+        verify(userRepository).deleteByEmail(email);
     }
 
     @Test
-    public void throwExceptionWhenDeleteInvokedForUserWithEmailNotFoundInDatabase() {
+    void throwExceptionWhenDeleteInvokedForUserWithEmailNotFoundInDatabase() {
         // given
         var email = "user@bloomer.com";
 
@@ -346,7 +346,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void successfullyRegisterUser() {
+    void successfullyRegisterUser() {
         // given
         var request = new RegisterUserRequest("user@bloomer.com", "fn", "ln", "passwd");
 
@@ -360,7 +360,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void throwExceptionWhenRegisterUserInvokedWithEmailAlreadyExists() {
+    void throwExceptionWhenRegisterUserInvokedWithEmailAlreadyExists() {
         // given
         var request = new RegisterUserRequest("user@bloomer.com", "fn", "ln", "passwd");
 
