@@ -82,3 +82,7 @@ jobs:
         with:
           name: artifact
           path: target/bloomer-api.jar
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
