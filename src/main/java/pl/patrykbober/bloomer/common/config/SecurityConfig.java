@@ -50,6 +50,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
+                        .mvcMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .mvcMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
