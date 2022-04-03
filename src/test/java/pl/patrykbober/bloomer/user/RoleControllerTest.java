@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RoleControllerTest {
+class RoleControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -31,7 +31,7 @@ public class RoleControllerTest {
 
     @WithMockUser
     @Test
-    public void returnAllRolesWhenUserAuthenticated() throws Exception {
+    void returnAllRolesWhenUserAuthenticated() throws Exception {
         var role = new RoleDto(1L, "USER");
         var roleList = List.of(role);
 

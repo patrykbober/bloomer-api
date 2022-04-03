@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-public class AuthIntegrationTest {
+class AuthIntegrationTest {
 
     public static final String TOKEN_ENDPOINT = "/token";
 
@@ -49,7 +49,7 @@ public class AuthIntegrationTest {
     private JwtDecoder jwtDecoder;
 
     @Test
-    public void loginWithValidCredentialsReturnsCorrectResponse() throws Exception {
+    void loginWithValidCredentialsReturnsCorrectResponse() throws Exception {
         var grant_type = "password";
         var username = "user@bloomer.com";
         var password = "password";
@@ -80,7 +80,6 @@ public class AuthIntegrationTest {
         var refreshToken = jwtDecoder.decode((String) responseMap.get("refreshToken"));
 
         assertThat(refreshToken).isNotNull();
-        assertThat(refreshToken).isNotNull();
         assertThat(refreshToken.getIssuedAt()).isNotNull()
                 .isCloseTo(Instant.now(), within(3, ChronoUnit.SECONDS));
         assertThat(refreshToken.getExpiresAt()).isNotNull()
@@ -92,7 +91,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    public void loginWithInvalidUsernameResultsIn401() throws Exception {
+    void loginWithInvalidUsernameResultsIn401() throws Exception {
         var grant_type = "password";
         var username = "invalid_user@bloomer.com";
         var password = "password";
@@ -107,7 +106,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    public void loginWithInvalidGrantTypeResultsIn400() throws Exception {
+    void loginWithInvalidGrantTypeResultsIn400() throws Exception {
         var grant_type = "invalid";
         var username = "user@bloomer.com";
         var password = "password";
@@ -122,7 +121,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    public void loginWithInvalidPasswordResultsIn401() throws Exception {
+    void loginWithInvalidPasswordResultsIn401() throws Exception {
         var grant_type = "password";
         var username = "user@bloomer.com";
         var password = "invalid_password";
@@ -137,7 +136,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    public void refreshWithValidRefreshTokenReturnsCorrectResponseWithNewRefreshToken() throws Exception {
+    void refreshWithValidRefreshTokenReturnsCorrectResponseWithNewRefreshToken() throws Exception {
         var username = "admin@bloomer.com";
         var password = "password";
 

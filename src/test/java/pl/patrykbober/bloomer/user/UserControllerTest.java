@@ -28,7 +28,7 @@ import static pl.patrykbober.bloomer.common.util.BloomerTestUtils.asJsonString;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +38,7 @@ public class UserControllerTest {
 
     @WithMockUser
     @Test
-    public void returnAllUsersWhenUserAuthenticated() throws Exception {
+    void returnAllUsersWhenUserAuthenticated() throws Exception {
         var user = new UserDto(1L, "user1@bloomer.com", "user", "bloomer", true);
         var userList = List.of(user);
 
@@ -59,7 +59,7 @@ public class UserControllerTest {
 
     @WithMockUser
     @Test
-    public void returnUserByIdWhenUserAuthenticated() throws Exception {
+    void returnUserByIdWhenUserAuthenticated() throws Exception {
         var user = new UserDto(1L, "user1@bloomer.com", "user", "bloomer", true);
 
         when(userService.findById(any())).thenReturn(user);
@@ -73,7 +73,7 @@ public class UserControllerTest {
 
     @WithAnonymousUser
     @Test
-    public void successfullyRegisterUser() throws Exception {
+    void successfullyRegisterUser() throws Exception {
         var request = new RegisterUserRequest("newuser@bloomer.com", "new", "user", "passwd");
 
         mockMvc.perform(post("/users/register")
@@ -87,7 +87,7 @@ public class UserControllerTest {
 
     @WithMockUser(roles = {"USER", "ADMIN"})
     @Test
-    public void successfullyCreateUserWhenHasAdminRole() throws Exception {
+    void successfullyCreateUserWhenHasAdminRole() throws Exception {
         var request = new CreateUserRequest("newuser@bloomer.com", "new", "user", "passwd", true, List.of("USER", "ADMIN"));
 
         mockMvc.perform(post("/users")
@@ -101,7 +101,7 @@ public class UserControllerTest {
 
     @WithMockUser(roles = {"USER", "ADMIN"})
     @Test
-    public void successfullyUpdateUserWhenHasAdminRole() throws Exception {
+    void successfullyUpdateUserWhenHasAdminRole() throws Exception {
         var user = new UserDto(1L, "user1@bloomer.com", "newFirstName", "newLastName", true);
         var request = new UpdateUserRequest("newFirstName", "newLastName", null, null, null);
 
@@ -121,7 +121,7 @@ public class UserControllerTest {
 
     @WithMockUser(authorities = {"USER", "ADMIN"})
     @Test
-    public void successfullyDeleteUserWhenHasAdminRole() throws Exception {
+    void successfullyDeleteUserWhenHasAdminRole() throws Exception {
         mockMvc.perform(delete("/users/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -131,7 +131,7 @@ public class UserControllerTest {
 
     @WithMockUser(username = "user1@bloomer.com")
     @Test
-    public void returnCurrentlyLoggedInUser() throws Exception {
+    void returnCurrentlyLoggedInUser() throws Exception {
         var user = new UserDto(1L, "user1@bloomer.com", "user", "bloomer", true);
 
         when(userService.findByEmail(any())).thenReturn(user);
@@ -149,7 +149,7 @@ public class UserControllerTest {
 
     @WithMockUser(username = "user1@bloomer.com")
     @Test
-    public void successfullyUpdateCurrentUser() throws Exception {
+    void successfullyUpdateCurrentUser() throws Exception {
         var user = new UserDto(1L, "user1@bloomer.com", "newFirstName", "newLastName", true);
         var request = new SelfUpdateUserRequest("newFirstName", "newLastName");
 
@@ -169,7 +169,7 @@ public class UserControllerTest {
 
     @WithMockUser(username = "user1@bloomer.com")
     @Test
-    public void successfullyDeleteCurrentUser() throws Exception {
+    void successfullyDeleteCurrentUser() throws Exception {
         mockMvc.perform(delete("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RoleServiceTest {
+class RoleServiceTest {
 
     @Mock
     private RoleMapper roleMapper;
@@ -30,7 +30,7 @@ public class RoleServiceTest {
     private final RoleMapper mapper = Mappers.getMapper(RoleMapper.class);
 
     @Test
-    public void getAllRolesFromDatabase() {
+    void getAllRolesFromDatabase() {
         // given
         var userRole = Role.builder()
                 .id(1L)
