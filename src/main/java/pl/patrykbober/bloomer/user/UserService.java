@@ -1,6 +1,7 @@
 package pl.patrykbober.bloomer.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import pl.patrykbober.bloomer.common.exception.BloomerException;
 import pl.patrykbober.bloomer.common.exception.ErrorCode;
 import pl.patrykbober.bloomer.user.dto.UserDto;
+import pl.patrykbober.bloomer.user.event.OnUserRegistrationCompleteEvent;
 import pl.patrykbober.bloomer.user.request.CreateUserRequest;
 import pl.patrykbober.bloomer.user.request.RegisterUserRequest;
 import pl.patrykbober.bloomer.user.request.SelfUpdateUserRequest;
@@ -26,6 +28,7 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Long create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
@@ -120,6 +123,8 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
+        eventPublisher.publishEvent(new OnUserRegistrationCompleteEvent(user.getId()));
+
         return user.getId();
     }
 }

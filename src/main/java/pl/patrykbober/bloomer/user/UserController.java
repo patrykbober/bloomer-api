@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pl.patrykbober.bloomer.common.util.UriBuilder;
+import pl.patrykbober.bloomer.common.util.UriUtil;
 import pl.patrykbober.bloomer.user.dto.UserDto;
 import pl.patrykbober.bloomer.user.request.CreateUserRequest;
 import pl.patrykbober.bloomer.user.request.RegisterUserRequest;
@@ -18,6 +18,7 @@ import pl.patrykbober.bloomer.user.response.UsersResponse;
 public class UserController {
 
     private final UserService userService;
+    private final AccountConfirmationTokenService accountConfirmationTokenService;
 
     @GetMapping
     public ResponseEntity<UsersResponse> getAll() {
@@ -35,7 +36,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CreateUserRequest request) {
         var id = userService.create(request);
-        var location = UriBuilder.requestUriWithId(id);
+        var location = UriUtil.requestUriWithId(id);
         return ResponseEntity.created(location).build();
     }
 
@@ -54,8 +55,14 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody RegisterUserRequest request) {
         var id = userService.register(request);
-        var location = UriBuilder.requestUriWithId(id);
+        var location = UriUtil.requestUriWithPathAndId("/users", id);
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/confirm")
+    public ResponseEntity<Void> confirmAccount(@RequestParam("token") String token) {
+        accountConfirmationTokenService.confirm(token);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")

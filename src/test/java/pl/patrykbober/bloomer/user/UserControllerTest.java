@@ -1,5 +1,6 @@
 package pl.patrykbober.bloomer.user;
 
+import org.hamcrest.core.StringEndsWith;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +21,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,6 +38,9 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private AccountConfirmationTokenService accountConfirmationTokenService;
 
     @WithMockUser
     @Test
@@ -76,12 +82,30 @@ class UserControllerTest {
     void successfullyRegisterUser() throws Exception {
         var request = new RegisterUserRequest("newuser@bloomer.com", "new", "user", "passwd");
 
+        when(userService.register(any())).thenReturn(1L);
+
         mockMvc.perform(post("/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(header().string(HttpHeaders.LOCATION, new StringEndsWith("/users/1")))
+                .andDo(print());
+    }
+
+    @WithAnonymousUser
+    @Test
+    void successfullyConfirmAccount() throws Exception {
+        var token = "valid-token";
+
+        doNothing().when(accountConfirmationTokenService).confirm(any());
+
+        mockMvc.perform(get("/users/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .queryParam("token", token))
+                .andExpect(status().isNoContent())
                 .andDo(print());
     }
 
@@ -90,12 +114,15 @@ class UserControllerTest {
     void successfullyCreateUserWhenHasAdminRole() throws Exception {
         var request = new CreateUserRequest("newuser@bloomer.com", "new", "user", "passwd", true, List.of("USER", "ADMIN"));
 
+        when(userService.create(any())).thenReturn(1L);
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(asJsonString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(header().string(HttpHeaders.LOCATION, new StringEndsWith("/users/1")))
                 .andDo(print());
     }
 
@@ -122,6 +149,8 @@ class UserControllerTest {
     @WithMockUser(authorities = {"USER", "ADMIN"})
     @Test
     void successfullyDeleteUserWhenHasAdminRole() throws Exception {
+        doNothing().when(userService).deleteById(anyLong());
+
         mockMvc.perform(delete("/users/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -170,6 +199,8 @@ class UserControllerTest {
     @WithMockUser(username = "user1@bloomer.com")
     @Test
     void successfullyDeleteCurrentUser() throws Exception {
+        doNothing().when(userService).deleteByEmail(any());
+
         mockMvc.perform(delete("/users/me")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
