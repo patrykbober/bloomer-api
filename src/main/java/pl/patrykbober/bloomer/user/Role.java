@@ -23,4 +23,7 @@ public class Role extends AbstractBaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @Column(name = "default_role", nullable = false)
+    private boolean defaultRole = false;
+
 }

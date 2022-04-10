@@ -52,4 +52,12 @@ public class BloomerUser extends AbstractBaseEntity {
     )
     private Set<Role> roles = new HashSet<>();
 
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
 }

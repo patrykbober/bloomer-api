@@ -1,12 +1,15 @@
 package pl.patrykbober.bloomer.mail;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailService {
@@ -20,7 +23,14 @@ public class MailService {
         message.setSubject("Bloomer: confirm your account");
         message.setText(String.format("Click the link in order to verify your account:%n%s", confirmationUrl));
 
-        mailSender.send(message);
+        log.info("Sending account confirmation email to {}", String.join(", ", recipients));
+        try {
+            mailSender.send(message);
+            log.info("Account confirmation email has been sent: {}", message);
+        } catch (MailException e) {
+            log.error("Error occurred while sending email to {}", String.join(", ", recipients), e);
+            throw e;
+        }
     }
 
 }
