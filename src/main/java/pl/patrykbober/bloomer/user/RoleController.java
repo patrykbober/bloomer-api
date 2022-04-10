@@ -20,13 +20,13 @@ public class RoleController {
     }
 
     @PostMapping("/users/{userId}/roles")
-    public ResponseEntity<Void> addRolesToUser(@PathVariable Long userId, UserRolesRequest request) {
+    public ResponseEntity<Void> addRolesToUser(@PathVariable Long userId, @RequestBody UserRolesRequest request) {
         roleService.addRolesToUser(userId, request.roleNames());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/users/{userId}/roles")
-    public ResponseEntity<Void> deleteRolesFromUser(@PathVariable Long userId, UserRolesRequest request) {
+    public ResponseEntity<Void> deleteRolesFromUser(@PathVariable Long userId, @RequestBody UserRolesRequest request) {
         roleService.deleteRolesFromUser(userId, request.roleNames());
         return ResponseEntity.noContent().build();
     }

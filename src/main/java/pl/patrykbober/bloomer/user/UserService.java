@@ -74,7 +74,7 @@ public class UserService {
 
         user.setIfNotNull(user::setFirstName, request.firstName());
         user.setIfNotNull(user::setLastName, request.lastName());
-        user.setIfNotNull(user::setPassword, passwordEncoder.encode(request.password()));
+        user.setIfNotNull(user::setPassword, request.password() != null ? passwordEncoder.encode(request.password()) : null);
         user.setIfNotNull(user::setActive, request.active());
 
         userRepository.save(user);
