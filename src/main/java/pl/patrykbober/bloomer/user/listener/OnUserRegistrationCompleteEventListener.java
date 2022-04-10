@@ -1,8 +1,8 @@
 package pl.patrykbober.bloomer.user.listener;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 import pl.patrykbober.bloomer.common.util.UriUtil;
 import pl.patrykbober.bloomer.mail.MailService;
 import pl.patrykbober.bloomer.user.AccountConfirmationTokenService;
@@ -19,7 +19,7 @@ public class OnUserRegistrationCompleteEventListener {
     private final MailService mailService;
     private final AccountConfirmationTokenService accountConfirmationTokenService;
 
-    @EventListener
+    @TransactionalEventListener
     public void handleEvent(OnUserRegistrationCompleteEvent event) {
         var user = userRepository.findById(event.userId())
                 .orElseThrow(() -> new AssertionError(String.format("User with id %s was not found", event.userId())));

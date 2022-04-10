@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.patrykbober.bloomer.common.exception.BloomerException;
 import pl.patrykbober.bloomer.common.exception.ErrorCode;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class AccountConfirmationTokenService {

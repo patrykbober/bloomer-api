@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.patrykbober.bloomer.common.exception.BloomerException;
 import pl.patrykbober.bloomer.common.exception.ErrorCode;
 import pl.patrykbober.bloomer.user.dto.UserDto;
@@ -18,6 +19,7 @@ import pl.patrykbober.bloomer.user.request.UpdateUserRequest;
 import java.util.HashSet;
 import java.util.List;
 
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -28,6 +30,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public Long create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new BloomerException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
@@ -68,6 +71,7 @@ public class UserService {
                 .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
     }
 
+    @Transactional
     public UserDto update(Long id, UpdateUserRequest request) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
@@ -81,6 +85,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    @Transactional
     public UserDto update(String email, SelfUpdateUserRequest request) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
@@ -92,6 +97,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         try {
             userRepository.deleteById(id);
@@ -100,6 +106,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void deleteByEmail(String email) {
         try {
             userRepository.deleteByEmail(email);
@@ -108,6 +115,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public Long register(RegisterUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new BloomerException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);

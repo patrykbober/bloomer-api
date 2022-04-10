@@ -3,12 +3,14 @@ package pl.patrykbober.bloomer.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.patrykbober.bloomer.common.exception.BloomerException;
 import pl.patrykbober.bloomer.common.exception.ErrorCode;
 import pl.patrykbober.bloomer.user.dto.RoleDto;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class RoleService {
@@ -23,6 +25,7 @@ public class RoleService {
                 .toList();
     }
 
+    @Transactional
     public void addRolesToUser(Long userId, List<String> roleNames) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
@@ -36,6 +39,7 @@ public class RoleService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void deleteRolesFromUser(Long userId, List<String> roleNames) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
