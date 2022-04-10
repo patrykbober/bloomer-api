@@ -1,6 +1,7 @@
 package pl.patrykbober.bloomer.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import pl.patrykbober.bloomer.user.dto.RoleDto;
 
 import java.util.List;
 
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
@@ -27,29 +29,28 @@ public class RoleService {
 
     @Transactional
     public void addRolesToUser(Long userId, List<String> roleNames) {
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
-
-        roleRepository.findByNameIn(roleNames.stream()
-                        .map(String::trim)
-                        .map(String::toUpperCase)
-                        .toList())
-                .forEach(user::addRole);
-
-        userRepository.save(user);
+        var user = getUserByIdOrThrow(userId);
+        getRolesByNameIn(roleNames).forEach(user::addRole);
     }
 
     @Transactional
     public void deleteRolesFromUser(Long userId, List<String> roleNames) {
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
+        var user = getUserByIdOrThrow(userId);
+        getRolesByNameIn(roleNames).forEach(user::removeRole);
+    }
 
-        roleRepository.findByNameIn(roleNames.stream()
-                        .map(String::trim)
-                        .map(String::toUpperCase)
-                        .toList())
-                .forEach(user::removeRole);
+    private BloomerUser getUserByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("User with id {} was not found", userId);
+                    return new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+                });
+    }
 
-        userRepository.save(user);
+    private List<Role> getRolesByNameIn(List<String> roleNames) {
+        return roleRepository.findByNameIn(roleNames.stream()
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .toList());
     }
 }

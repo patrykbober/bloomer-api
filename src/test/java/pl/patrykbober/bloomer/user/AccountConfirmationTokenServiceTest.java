@@ -72,7 +72,6 @@ class AccountConfirmationTokenServiceTest {
         accountConfirmationTokenService.confirm(token);
 
         // then
-        verify(accountConfirmationTokenRepository).save(any());
         assertThat(user.isActive()).isTrue();
         assertThat(confirmationToken.isUsed()).isTrue();
     }

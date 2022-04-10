@@ -19,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,7 +85,6 @@ class RoleServiceTest {
         roleService.addRolesToUser(userId, roleNames);
 
         // then
-        verify(userRepository).save(any(BloomerUser.class));
         assertThat(user.getRoles())
                 .hasSize(3)
                 .containsAll(List.of(userRole, adminRole, newRole));
@@ -127,7 +125,6 @@ class RoleServiceTest {
         roleService.deleteRolesFromUser(userId, roleNames);
 
         // then
-        verify(userRepository).save(any(BloomerUser.class));
         assertThat(user.getRoles())
                 .hasSize(1)
                 .element(0)
