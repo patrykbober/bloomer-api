@@ -14,7 +14,7 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Bloomer API")
                         .description("Bloomer backend application")
-                        .version("v0.0.1"));
+                        .version("v1"));
     }
 
 }

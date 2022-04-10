@@ -50,8 +50,9 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize
-                        .mvcMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .mvcMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                         .mvcMatchers(HttpMethod.POST, "/users/register").permitAll()
+                        .mvcMatchers(HttpMethod.GET, "/users/confirm").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

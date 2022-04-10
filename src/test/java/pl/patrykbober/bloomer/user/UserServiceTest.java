@@ -7,11 +7,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.patrykbober.bloomer.common.exception.BloomerException;
 import pl.patrykbober.bloomer.common.exception.ErrorCode;
 import pl.patrykbober.bloomer.user.dto.UserDto;
+import pl.patrykbober.bloomer.user.event.OnUserRegistrationCompleteEvent;
 import pl.patrykbober.bloomer.user.request.CreateUserRequest;
 import pl.patrykbober.bloomer.user.request.RegisterUserRequest;
 import pl.patrykbober.bloomer.user.request.SelfUpdateUserRequest;
@@ -40,6 +42,9 @@ class UserServiceTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private UserService userService;
@@ -357,6 +362,7 @@ class UserServiceTest {
 
         // then
         verify(userRepository).save(any(BloomerUser.class));
+        verify(eventPublisher).publishEvent(any(OnUserRegistrationCompleteEvent.class));
     }
 
     @Test

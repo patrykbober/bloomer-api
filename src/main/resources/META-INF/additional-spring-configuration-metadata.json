@@ -19,6 +19,11 @@
       "name": "app.jwt.expiry.refresh_token",
       "type": "java.lang.String",
       "description": "Expiration time of a refresh token in seconds."
+    },
+    {
+      "name": "app.account_confirmation.token.expiry",
+      "type": "java.lang.String",
+      "description": "Expiration time of an account confirmation token in seconds."
     }
   ]
 }
