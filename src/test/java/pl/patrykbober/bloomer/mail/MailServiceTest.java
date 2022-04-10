@@ -54,7 +54,7 @@ class MailServiceTest {
         var thrown = catchThrowableOfType(() -> mailService.sendAccountConfirmationEmail(List.of(recipient), confirmationUrl), MailException.class);
 
         // then
-        assertThat(output.getOut()).contains("Error occurred when sending email to user@bloomer.com");
+        assertThat(output.getOut()).contains("Error occurred while sending email to user@bloomer.com");
         assertThat(thrown).isNotNull();
         assertThat(thrown).isInstanceOf(MailSendException.class);
     }
