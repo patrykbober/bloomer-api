@@ -45,18 +45,18 @@ class MailServiceTest {
     @Test
     void logErrorWhenMailExceptionIsThrown(CapturedOutput output) {
         // given
-        var recipient = "user@bloomer.com";
+        var recipients = List.of("user@bloomer.com");
         var confirmationUrl = "url";
 
         doThrow(new MailSendException("error")).when(mailSender).send(any(SimpleMailMessage.class));
 
         // when
-        var thrown = catchThrowableOfType(() -> mailService.sendAccountConfirmationEmail(List.of(recipient), confirmationUrl), MailException.class);
+        var thrown = catchThrowableOfType(() -> mailService.sendAccountConfirmationEmail(recipients, confirmationUrl), MailException.class);
 
         // then
         assertThat(output.getOut()).contains("Error occurred while sending email to user@bloomer.com");
-        assertThat(thrown).isNotNull();
-        assertThat(thrown).isInstanceOf(MailSendException.class);
+        assertThat(thrown).isNotNull()
+                .isInstanceOf(MailSendException.class);
     }
 
 }
