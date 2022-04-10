@@ -18,7 +18,7 @@ public class MailService {
         message.setFrom("noreply@bloomer.com");
         message.setTo(recipients.toArray(new String[0]));
         message.setSubject("Bloomer: confirm your account");
-        message.setText(String.format("Click the link in order to verify your account:\n%s", confirmationUrl));
+        message.setText(String.format("Click the link in order to verify your account:%n%s", confirmationUrl));
 
         mailSender.send(message);
     }
