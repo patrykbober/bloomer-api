@@ -57,8 +57,7 @@ class UserServiceTest {
         var request = new CreateUserRequest("user@bloomer.com", "fn", "ln", "passwd", true, List.of("USER", "INVALID"));
 
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        when(roleRepository.findByName("USER")).thenReturn(Optional.of(new Role(1L, "USER")));
-        when(roleRepository.findByName("INVALID")).thenReturn(Optional.empty());
+        when(roleRepository.findByNameIn(any())).thenReturn(List.of(new Role(1L, "USER", false)));
 
         // when
         userService.create(request);
@@ -207,7 +206,7 @@ class UserServiceTest {
     void successfullyUpdateUserByIdIfFoundInDatabase() {
         // given
         var id = 1L;
-        var request = new UpdateUserRequest("newFn", "newLn", "newPassword", null, null);
+        var request = new UpdateUserRequest("newFn", "newLn", "newPassword", null);
         var user = BloomerUser.builder()
                 .id(1L)
                 .email("user@bloomer.com")
@@ -238,7 +237,7 @@ class UserServiceTest {
     void throwExceptionWhenUpdateInvokedForUserWithIdNotFoundInDatabase() {
         // given
         var id = 1L;
-        var request = new UpdateUserRequest("newFn", "newLn", "newPassword", null, null);
+        var request = new UpdateUserRequest("newFn", "newLn", "newPassword", null);
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 

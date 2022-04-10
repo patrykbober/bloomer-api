@@ -15,10 +15,8 @@ import pl.patrykbober.bloomer.user.request.RegisterUserRequest;
 import pl.patrykbober.bloomer.user.request.SelfUpdateUserRequest;
 import pl.patrykbober.bloomer.user.request.UpdateUserRequest;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,17 +33,17 @@ public class UserService {
             throw new BloomerException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
         }
 
-        var roles = request.roles().stream()
-                .map(roleRepository::findByName)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toSet());
+        var roles = roleRepository.findByNameIn(request.roles().stream()
+                .map(String::trim)
+                .map(String::toUpperCase)
+                .toList());
         var user = BloomerUser.builder()
                 .email(request.email())
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .password(passwordEncoder.encode(request.password()))
                 .active(request.active())
-                .roles(roles)
+                .roles(new HashSet<>(roles))
                 .build();
 
         userRepository.save(user);
@@ -79,6 +77,7 @@ public class UserService {
         user.setIfNotNull(user::setPassword, passwordEncoder.encode(request.password()));
         user.setIfNotNull(user::setActive, request.active());
 
+        userRepository.save(user);
         return userMapper.toDto(user);
     }
 
@@ -89,6 +88,7 @@ public class UserService {
         user.setIfNotNull(user::setFirstName, request.firstName());
         user.setIfNotNull(user::setLastName, request.lastName());
 
+        userRepository.save(user);
         return userMapper.toDto(user);
     }
 
@@ -113,13 +113,14 @@ public class UserService {
             throw new BloomerException(ErrorCode.EMAIL_ALREADY_EXISTS, HttpStatus.CONFLICT);
         }
 
+        var defaultRoles = roleRepository.findDefaultRoles();
         var user = BloomerUser.builder()
                 .email(request.email())
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .password(passwordEncoder.encode(request.password()))
                 .active(false)
-                .roles(Set.of())
+                .roles(new HashSet<>(defaultRoles))
                 .build();
 
         userRepository.save(user);

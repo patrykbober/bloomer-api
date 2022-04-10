@@ -130,7 +130,7 @@ class UserControllerTest {
     @Test
     void successfullyUpdateUserWhenHasAdminRole() throws Exception {
         var user = new UserDto(1L, "user1@bloomer.com", "newFirstName", "newLastName", true);
-        var request = new UpdateUserRequest("newFirstName", "newLastName", null, null, null);
+        var request = new UpdateUserRequest("newFirstName", "newLastName", null, null);
 
         when(userService.update(any(), any(UpdateUserRequest.class))).thenReturn(user);
 
@@ -146,7 +146,7 @@ class UserControllerTest {
                 .andDo(print());
     }
 
-    @WithMockUser(authorities = {"USER", "ADMIN"})
+    @WithMockUser(roles = {"USER", "ADMIN"})
     @Test
     void successfullyDeleteUserWhenHasAdminRole() throws Exception {
         doNothing().when(userService).deleteById(anyLong());

@@ -1,11 +1,15 @@
 package pl.patrykbober.bloomer.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.Optional;
+import java.util.Collection;
+import java.util.List;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Optional<Role> findByName(String name);
+    List<Role> findByNameIn(Collection<String> names);
 
+    @Query("SELECT r FROM Role r WHERE r.defaultRole = TRUE")
+    List<Role> findDefaultRoles();
 }
