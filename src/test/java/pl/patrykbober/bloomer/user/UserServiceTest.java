@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +30,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 class UserServiceTest {
 
     @Mock
@@ -308,18 +310,17 @@ class UserServiceTest {
     }
 
     @Test
-    void throwExceptionWhenDeleteInvokedForUserWithIdNotFoundInDatabase() {
+    void logErrorAndIgnoreWhenDeleteInvokedForUserWithIdNotFoundInDatabase(CapturedOutput output) {
         // given
         var id = 1L;
 
         doThrow(new EmptyResultDataAccessException(1)).when(userRepository).deleteById(anyLong());
 
         // when
-        var thrown = catchThrowableOfType(() -> userService.deleteById(id), BloomerException.class);
+        userService.deleteById(id);
 
         // then
-        assertThat(thrown).isNotNull();
-        assertThat(thrown.getErrorCode()).isEqualTo(ErrorCode.USER_NOT_FOUND);
+        assertThat(output.getOut()).contains("User with id 1 was not found - ignoring");
     }
 
     @Test
@@ -335,18 +336,17 @@ class UserServiceTest {
     }
 
     @Test
-    void throwExceptionWhenDeleteInvokedForUserWithEmailNotFoundInDatabase() {
+    void logErrorAndIgnoreWhenDeleteInvokedForUserWithEmailNotFoundInDatabase(CapturedOutput output) {
         // given
         var email = "user@bloomer.com";
 
         doThrow(new EmptyResultDataAccessException(1)).when(userRepository).deleteByEmail(anyString());
 
         // when
-        var thrown = catchThrowableOfType(() -> userService.deleteByEmail(email), BloomerException.class);
+        userService.deleteByEmail(email);
 
         // then
-        assertThat(thrown).isNotNull();
-        assertThat(thrown.getErrorCode()).isEqualTo(ErrorCode.USER_NOT_FOUND);
+        assertThat(output.getOut()).contains("User with email user@bloomer.com was not found - ignoring");
     }
 
     @Test

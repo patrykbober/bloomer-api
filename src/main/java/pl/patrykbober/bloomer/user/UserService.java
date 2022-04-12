@@ -116,8 +116,7 @@ public class UserService {
         try {
             userRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            log.error("Error occurred while deleting user with id {}", id, e);
-            throw new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+            log.info("User with id {} was not found - ignoring", id);
         }
     }
 
@@ -126,8 +125,7 @@ public class UserService {
         try {
             userRepository.deleteByEmail(email);
         } catch (EmptyResultDataAccessException e) {
-            log.error("Error occurred while deleting user with email {}", email, e);
-            throw new BloomerException(ErrorCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+            log.info("User with email {} was not found - ignoring", email);
         }
     }
 
