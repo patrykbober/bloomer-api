@@ -1,29 +1,19 @@
 {
   "properties": [
     {
-      "name": "app.jwt.private.key",
+      "name": "app.auth.keycloak.base-url",
       "type": "java.lang.String",
-      "description": "Private key location."
+      "description": "Keycloak base url."
     },
     {
-      "name": "app.jwt.public.key",
+      "name": "app.auth.keycloak.realm-name",
       "type": "java.lang.String",
-      "description": "Public key location."
+      "description": "Keycloak realm name."
     },
     {
-      "name": "app.jwt.expiry.access_token",
+      "name": "app.auth.keycloak.client-id",
       "type": "java.lang.String",
-      "description": "Expiration time of an access token in seconds."
-    },
-    {
-      "name": "app.jwt.expiry.refresh_token",
-      "type": "java.lang.String",
-      "description": "Expiration time of a refresh token in seconds."
-    },
-    {
-      "name": "app.account_confirmation.token.expiry",
-      "type": "java.lang.String",
-      "description": "Expiration time of an account confirmation token in seconds."
+      "description": "Keycloak OAuth2 client identifier."
     }
   ]
 }
