@@ -1,6 +1,8 @@
 server:
   servlet:
     context-path: /api
+  error:
+    include-message: always
 
 springdoc:
   api-docs:
@@ -9,6 +11,11 @@ springdoc:
 spring:
   liquibase:
     enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/bloomer
   mail:
     host: smtp.gmail.com
     port: 587
@@ -22,13 +29,8 @@ spring:
             enable: true
 
 app:
-  jwt:
-    private.key: classpath:key/bloomer.key
-    public.key: classpath:key/bloomer.key.pub
-
-    expiry:
-      access_token: 3600 # 60 * 60
-      refresh_token: 1209600 # 60 * 60 * 24 * 14
-  account_confirmation:
-    token:
-      expiry: 86400 # 60 * 60 * 24
+  auth:
+    keycloak:
+      base-url: http://localhost:8080
+      realm-name: bloomer
+      client-id: bloomer-android
